@@ -1,2 +1,278 @@
 
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>CodeMaster</title>
 
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#1e1e1e;
+    color:white;
+}
+
+header{
+    height:60px;
+    background:#252526;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+}
+
+header button{
+    background:#0e639c;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-left:5px;
+}
+
+.tabs{
+    display:flex;
+    background:#2d2d30;
+}
+
+.tab{
+    padding:10px 20px;
+    cursor:pointer;
+}
+
+.tab:hover{
+    background:#3c3c3c;
+}
+
+main{
+    display:flex;
+    height:50vh;
+}
+
+.editor{
+    width:50%;
+}
+
+textarea{
+    width:100%;
+    height:100%;
+    background:#1e1e1e;
+    color:white;
+    border:none;
+    padding:10px;
+    font-size:16px;
+    display:none;
+    outline:none;
+}
+
+textarea.active{
+    display:block;
+}
+
+.preview{
+    width:50%;
+    background:white;
+}
+
+iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+/* Aufgaben */
+.taskbox{
+    background:#252526;
+    padding:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h2>🚀 CodeMaster</h2>
+
+<div>
+<button onclick="login()">👤 Login</button>
+<button onclick="runCode()">▶ Run</button>
+</div>
+</header>
+
+<div class="tabs">
+<div class="tab" onclick="showTab('html')">HTML</div>
+<div class="tab" onclick="showTab('css')">CSS</div>
+<div class="tab" onclick="showTab('js')">JS</div>
+</div>
+
+<main>
+
+<div class="editor">
+
+<textarea id="html" class="active">
+<h1>Hallo Welt</h1>
+<p>Schreibe deinen Code hier</p>
+</textarea>
+
+<textarea id="css">
+body { background: white; }
+</textarea>
+
+<textarea id="js">
+console.log("JS läuft");
+</textarea>
+
+</div>
+
+<div class="preview">
+<iframe id="preview"></iframe>
+</div>
+
+</main>
+
+<div class="taskbox">
+
+<h3>🏆 Level: <span id="level">1</span> | ⭐ XP: <span id="xp">0</span></h3>
+
+<h3 id="taskTitle">Aufgabe 1</h3>
+<p id="taskText">Erstelle eine &lt;h1&gt; mit "Hallo Welt"</p>
+
+<button onclick="checkTask()">✔ Prüfen</button>
+
+<p id="result"></p>
+
+</div>
+
+<script>
+
+let level = 1;
+let xp = 0;
+let user = "";
+
+/* LOGIN */
+function login(){
+    user = prompt("Dein Name:");
+    if(user){
+        loadData();
+        updateUI();
+        alert("Willkommen " + user);
+    }
+}
+
+/* SAVE */
+function saveData(){
+    if(!user) return;
+
+    let data = { level, xp };
+    localStorage.setItem(user, JSON.stringify(data));
+}
+
+/* LOAD */
+function loadData(){
+    let data = localStorage.getItem(user);
+    if(data){
+        let obj = JSON.parse(data);
+        level = obj.level;
+        xp = obj.xp;
+    }
+    updateTask();
+}
+
+/* TABS */
+function showTab(tab){
+    document.getElementById("html").classList.remove("active");
+    document.getElementById("css").classList.remove("active");
+    document.getElementById("js").classList.remove("active");
+
+    document.getElementById(tab).classList.add("active");
+}
+
+/* RUN CODE */
+function runCode(){
+
+let html = document.getElementById("html").value;
+let css = "<style>" + document.getElementById("css").value + "</style>";
+let js = "<script>" + document.getElementById("js").value + "<\/script>";
+
+document.getElementById("preview").srcdoc = html + css + js;
+
+}
+
+/* TASK SYSTEM */
+function checkTask(){
+
+let html = document.getElementById("html").value.toLowerCase();
+let correct = false;
+
+if(level === 1){
+    if(html.includes("<h1>") && html.includes("hallo welt")){
+        correct = true;
+    }
+}
+
+if(correct){
+    xp += 10;
+    document.getElementById("result").innerHTML = "🎉 Richtig!";
+    document.getElementById("result").style.color = "lightgreen";
+
+    updateLevel();
+    saveData();
+
+}else{
+    document.getElementById("result").innerHTML = "❌ Noch nicht richtig!";
+    document.getElementById("result").style.color = "red";
+}
+
+updateUI();
+}
+
+/* LEVEL */
+function updateLevel(){
+
+if(xp >= 20) level = 2;
+if(xp >= 40) level = 3;
+
+updateTask();
+}
+
+/* TASK CHANGE */
+function updateTask(){
+
+if(level === 1){
+    document.getElementById("taskTitle").innerText = "Aufgabe 1";
+    document.getElementById("taskText").innerText =
+    "Erstelle eine <h1> mit 'Hallo Welt'";
+}
+
+if(level === 2){
+    document.getElementById("taskTitle").innerText = "Aufgabe 2";
+    document.getElementById("taskText").innerText =
+    "Erstelle einen <button>";
+}
+
+if(level === 3){
+    document.getElementById("taskTitle").innerText = "Aufgabe 3";
+    document.getElementById("taskText").innerText =
+    "Erstelle einen <p> Text";
+}
+}
+
+/* UI */
+function updateUI(){
+document.getElementById("level").innerText = level;
+document.getElementById("xp").innerText = xp;
+}
+
+/* AUTO RUN */
+setTimeout(runCode, 1000);
+setInterval(saveData, 2000);
+
+</script>
+
+</body>
+</html>
