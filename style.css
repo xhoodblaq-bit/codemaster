@@ -1,1 +1,29 @@
-
+html::before {
+  content: ' Hello from kardo77! ';
+  position: right;
+  inset: 0;
+  z-index: -1;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  font-family: monospace;
+  opacity: 0.6;
+  background: white;
+  color: black;
+  padding: 5px 8px;
+  border-radius: 4px;
+}
+button{
+  background: royalblue
+  color: babyblue
+  border: none
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+#editor{
+  width:80%;
+  height:350px;
+  margin:auto;
+  border-radius:10px;
+  overflow:hidden;
+}
